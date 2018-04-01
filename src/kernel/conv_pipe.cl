@@ -41,8 +41,8 @@
 //#define DEBUG_LRN
 //#define DEBUG_LRN_OUT
 
-#include "hw_param.h"
-#include "rtl_lib.h"
+#include "../common/hw_param.h"
+#include "../RTL/rtl_lib.h"
 
 #pragma OPENCL_EXTENSION cl_altera_channels : enable
 

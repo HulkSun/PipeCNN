@@ -86,9 +86,9 @@ float accuracy5=0;
 #define WEIGHTS_FILE_SIZE 61063552  //fc8-1024
 #define LAYER_NUM         8
 #define CONV_NUM          5
-const char *weight_file_path = "./data/data_alex/weights.dat";
-const char *input_file_path = "./data/data_alex/image.dat";
-const char *ref_file_path = "./data/data_alex/fc8.dat";
+const char *weight_file_path = "../data/data_alex/weights.dat";
+const char *input_file_path = "../data/data_alex/image.dat";
+const char *ref_file_path = "../data/data_alex/fc8.dat";
 const char *dump_file_path = "./result_dump.txt";
 
 
