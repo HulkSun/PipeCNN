@@ -65,9 +65,9 @@ const char *vendor_name = "Intel";
 #define MEAN_DATA_CHANNEl 3
 #define PICTURE_NUM 8000
 #define MAX_PIC_NUM 50000
-const char *mean_data_file_path    = "./data/imagenet/mean_data.dat";
-const char *synset_word_file_path  = "./data/imagenet/synset_words.txt";
-const char *LabelPath		       = "./data/imagenet/val.txt";
+const char *mean_data_file_path    = "../data/imagenet/mean_data.dat";
+const char *synset_word_file_path  = "../data/imagenet/synset_words.txt";
+const char *LabelPath		       = "../data/imagenet/val.txt";
 char  picture_file_path_head[100]  = "/home/dwang/Work/imagenet/ilsvrc2012/ILSVRC2012_img_val/ILSVRC2012_val_";
 char  picture_file_path[100];
 int   label[MAX_PIC_NUM]={0};
