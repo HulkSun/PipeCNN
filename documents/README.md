@@ -218,7 +218,7 @@ However, it is always recommanded to use the IDE enviroment rather than makefile
 ---
 
 ## Configurations
-**HW Configuration.** Configuration of a new FPGA accelerator with different performance and hardware resource utilizations is controlled by a header file located in *device/hw_param.cl*. Change the following macros
+**HW Configuration.** Configuration of a new FPGA accelerator with different performance and hardware resource utilizations is controlled by a header file located in *device/hw_param.h*. Change the following macros
 * VEC_SIZE
 * LANE_NUM
 * CONV_GP_SIZE_X

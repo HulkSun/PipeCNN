@@ -5,7 +5,7 @@
  *
  * ------------------------------------------------------
  * Filename:
- *   - hw_param.cl
+ *   - hw_param.h
  *
  * Author(s):
  *   - Dong Wang, wangdong@m.bjtu.edu.cn

@@ -18,11 +18,11 @@
 #include <CL/opencl.h>
 
 // user defined library
-#include "ocl_util.h"
-#include "timer.h"
+#include "common/ocl_util.h"
+#include "common/timer.h"
 
 // CNN network configuration file
-#include "../device/hw_param.cl"
+#include "common/hw_param.h"
 #include "layer_config.h"
 
 #ifdef USE_OPENCV

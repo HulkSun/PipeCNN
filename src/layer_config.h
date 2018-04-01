@@ -1,4 +1,4 @@
-#include "../device/hw_param.cl"
+#include "common/hw_param.h"
 
 #define NUM_CONFIG_ITEM  25
 
