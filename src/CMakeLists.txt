@@ -33,9 +33,9 @@ add_custom_target(
  set(KERNEL_OUTPUT ${CMAKE_BINARY_DIR}/bin/conv.aocx)
  
  if(${FLOW} STREQUAL "sw_emu")
-     set(OCC_FLAGS -v --report -march=emulator -I ${RTL_DIR} -L ${RTL_DIR} -l rtl_lib.aoclib)
+     set(OCC_FLAGS -v --report -march=emulator  -L ${RTL_DIR} -l rtl_lib.aoclib)
  else(${FLOW} STREQUAL "sw_emu")
-     set(OCC_FLAGS -v --report --profile -I ${RTL_DIR} -L ${RTL_DIR} -l rtl_lib.aoclib)
+     set(OCC_FLAGS -v --report --profile  -L ${RTL_DIR} -l rtl_lib.aoclib)
  endif(${FLOW} STREQUAL "sw_emu")
  
  add_custom_target(
