@@ -1,6 +1,6 @@
 
 # hw | sw_emu
-set(FLOW sw_emu)
+set(FLOW hw)
 
 include_directories(/home/sh/intelFPGA_pro/16.1/hld/host/include)
 
@@ -40,6 +40,6 @@ add_custom_target(
  
  add_custom_target(
      fpga
-     ALL
+    #  ALL
      COMMAND aoc ${KERNEL_SRC} ${OCC_FLAGS} -o ${KERNEL_OUTPUT}    
  )

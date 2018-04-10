@@ -12,7 +12,9 @@ $ git clone https://github.com/HULKSUN/PipeCNN.git
 $ cd PipeCNN
 $ mkdir build
 $ cd build
-$ cmake3 .. && make
+$ cmake3 .. 
+$ make fpga
+$ make
 $ cd bin
 $ env CL_CONTEXT_EMULATOR_DEVICE_ALTERA=1 ./pipeCNN conv.aocx
 ```
