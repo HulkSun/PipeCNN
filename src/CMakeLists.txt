@@ -1,15 +1,17 @@
 
 # hw | sw_emu
-set(FLOW hw)
+set(FLOW sw_emu)
 
-find_package(OpenCV REQUIRED)
-if(OpenCV_FOUND)
-	message(STATUS "OpenCV_INCLUDE_DIRS=${OpenCV_INCLUDE_DIRS}")
-	message(STATUS "OpenCV_LIBS=${OpenCV_LIBS}")
-endif()
+option(USE_OpenCV OFF)
+if(USE_OpenCV)
+    find_package(OpenCV REQUIRED)
+    add_definitions(-DUSE_OPENCV)
+endif(USE_OpenCV) 
 
 include_directories(/home/sh/intelFPGA_pro/16.1/hld/host/include)
-include_directories(${OpenCV_INCLUDE_DIRS})
+if(USE_OpenCV)
+    include_directories(${OpenCV_INCLUDE_DIRS})
+endif(USE_OpenCV) 
 
 if(${FLOW} STREQUAL "sw_emu")
     add_definitions(-DFPGA_DEVICE -std=c++11 -g -DSW_EMU)
@@ -25,7 +27,9 @@ add_executable(${PROJECT_NAME} main.cpp layer_config.h common/ocl_util.cpp commo
 target_link_libraries(${PROJECT_NAME} alteracl)
 target_link_libraries(${PROJECT_NAME} terasic_a10_mmd)
 target_link_libraries(${PROJECT_NAME} elf)
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+if(USE_OpenCV)
+    target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+endif(USE_OpenCV) 
 
 # compile IP core
 add_custom_target(

@@ -13,8 +13,8 @@ $ cd PipeCNN
 $ mkdir build
 $ cd build
 $ cmake3 .. 
-$ make fpga
 $ make
+$ make fpga
 $ cd bin
 $ env CL_CONTEXT_EMULATOR_DEVICE_ALTERA=1 ./pipeCNN conv.aocx
 ```
