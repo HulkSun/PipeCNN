@@ -25,6 +25,8 @@
 #include "common/hw_param.h"
 #include "layer_config.h"
 
+#define USE_OPENCV 1
+
 #ifdef USE_OPENCV
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -68,7 +70,7 @@ const char *vendor_name = "Intel";
 const char *mean_data_file_path = "../data/imagenet/mean_data.dat";
 const char *synset_word_file_path = "../data/imagenet/synset_words.txt";
 const char *LabelPath = "../data/imagenet/val.txt";
-char picture_file_path_head[100] = "/home/dwang/Work/imagenet/ilsvrc2012/ILSVRC2012_img_val/ILSVRC2012_val_";
+char picture_file_path_head[100] = "/home/sh/data/ILSVRC2012_img_val/ILSVRC2012_val_";
 char picture_file_path[100];
 int label[MAX_PIC_NUM] = {0};
 char label_buf[MAX_PIC_NUM][1024] = {0};
