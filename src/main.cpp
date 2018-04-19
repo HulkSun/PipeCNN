@@ -63,7 +63,7 @@ const char *vendor_name = "Intel";
 #define MEAN_DATA_WIDTH 256
 #define MEAN_DATA_HEIGHT 256
 #define MEAN_DATA_CHANNEl 3
-#define PICTURE_NUM 8000
+#define PICTURE_NUM 50000
 #define MAX_PIC_NUM 50000
 const char *mean_data_file_path = "../data/imagenet/mean_data.dat";
 const char *synset_word_file_path = "../data/imagenet/synset_words.txt";
@@ -77,19 +77,26 @@ DTYPE searchTop[1024];
 float accuracy1 = 0;
 float accuracy5 = 0;
 
-// // AlexNet
-// // Original problem size
-// // File size is in num of DTYPE numbers
-// #define IMAGE_FILE_SIZE   (227*227*3)
-// //#define WEIGHTS_FILE_SIZE 60965224 //fc8-1000
-// #define WEIGHTS_FILE_SIZE 61063552  //fc8-1024
-// #define LAYER_NUM         8
-// #define CONV_NUM          5
-// const char *weight_file_path = "../data/data_alex/weights.dat";
-// const char *input_file_path = "../data/data_alex/image.dat";
-// const char *ref_file_path = "../data/data_alex/fc8.dat";
-// const char *dump_file_path = "./result_dump.txt";
+int true_count = 0;
+int false_count = 0;
 
+#ifdef ALEXNET
+// AlexNet
+// Original problem size
+// File size is in num of DTYPE numbers
+#define IMAGE_FILE_SIZE (227 * 227 * 3)
+//#define WEIGHTS_FILE_SIZE 60965224 //fc8-1000
+#define WEIGHTS_FILE_SIZE 61063552 //fc8-1024
+#define LAYER_NUM 8
+#define CONV_NUM 5
+const char *weight_file_path = "/home/sh/data/data_alex/weights.dat";
+const char *input_file_path = "/home/sh/data/data_alex/image.dat";
+const char *ref_file_path = "/home/sh/data/data_alex/fc8.dat";
+const char *dump_file_path = "./result_dump.txt";
+
+#endif
+
+#ifdef VGG
 // VGG16
 // Original problem size
 // File size is in num of DTYPE numbers
@@ -102,6 +109,7 @@ const char *weight_file_path = "/home/sh/data/data_vgg/weights.dat";
 const char *input_file_path = "/home/sh/data/data_vgg/image.dat";
 const char *ref_file_path = "/home/sh/data/data_vgg/fc8.dat";
 const char *dump_file_path = "./result_dump.txt";
+#endif
 
 // Configuration file instructions
 enum config_item
@@ -234,6 +242,7 @@ void extractOutput(DTYPE *output, DTYPE *output_one_item, unsigned item_num, uns
 void softmax(DTYPE *output_reorder, DTYPE *output);
 int getProb(DTYPE *output);
 void cleanup();
+void writeResults();
 
 int main(int argc, char **argv)
 {
@@ -985,17 +994,20 @@ int main(int argc, char **argv)
 	for (unsigned j = 0; j < LAYER_NUM; ++j)
 	{
 		printf("  Layer-%d:\n", j + 1);
-		printf("    MemRd: %0.3f ms\n", double(memRd_time[j]) / batch_float * 1e-6);
+		// printf("    MemRd: %0.3f ms\n", double(memRd_time[j]) / batch_float * 1e-6);
 		printf("    Conv : %0.3f ms\n", double(conv_time[j]) / batch_float * 1e-6);
 		printf("    Pool : %0.3f ms\n", double(pool_time[j]) / batch_float * 1e-6);
-		printf("    MemWr: %0.3f ms\n", double(memWr_time[j]) / batch_float * 1e-6);
-		printf("    Lrn  : %0.3f ms\n", double(lrn_time[j]) / batch_float * 1e-6);
+		// printf("    MemWr: %0.3f ms\n", double(memWr_time[j]) / batch_float * 1e-6);
+		// printf("    Lrn  : %0.3f ms\n", double(lrn_time[j]) / batch_float * 1e-6);
+		// printf("    Total: %0.3f ms\n", double(memRd_time[j] + conv_time[j] + pool_time[j] + memWr_time[j] + lrn_time[j]) / batch_float * 1e-6);
 		kernel_time += conv_time[j];
 	}
 	printf("\nTotal kernel runtime %0.3f ms \n", double(kernel_time) * 1e-6);
 	printf("Batch size = %d, average process time per batch: %0.3f ms \n\n", input_config[batch_size], double(kernel_time / batch_float) * 1e-6);
 	printf("Total runtime: %fs \n\n", time);
 #endif
+
+	writeResults();
 	// Release resource
 	cleanup();
 
@@ -1084,10 +1096,11 @@ void verifyResult(int num)
 
 #ifdef USE_OPENCV
 	int max_label;
-	char *substr;
 	softmax(output_reorder, output_one_item);
 	max_label = getProb(output_one_item);
+
 	// Show the picture
+	char *substr;
 	substr = &synset_buf[max_label][10];
 
 	Mat img = imread(picture_file_path);
@@ -1095,17 +1108,22 @@ void verifyResult(int num)
 	if (max_label == label[num - 1])
 	{
 		putText(img, "True", Point(20, 80), CV_FONT_HERSHEY_SIMPLEX, 0.8, Scalar(0, 255, 0), 2, 8);
+		printf("True: label = %d\n", label[num]);
+		++true_count;
 	}
 	else
 	{
 		putText(img, "False", Point(20, 80), CV_FONT_HERSHEY_SIMPLEX, 0.8, Scalar(0, 0, 255), 2, 8);
 		printf("False: True_label = %d Inferred_label = %d\n\n", label[num], max_label);
+		++false_count;
 	}
 	imshow("PipeCNN", img);
-	cvMoveWindow("PipeCNN", 0, 0); //set the window's position
+	// cvMoveWindow("PipeCNN", 0, 0); //set the window's position
 	waitKey(600);
 #else
 	// Validate the results
+	printf("VEC_SIZE: %d \n", VEC_SIZE);
+	printf("LANE_NUM: %d \n", LANE_NUM);
 	printf("\nStart verifying results ...\n");
 	unsigned int err_num;
 	float std_err; // standard errors
@@ -1131,8 +1149,8 @@ void verifyResult(int num)
 		softmax(output_reorder, output_one_item);
 		getProb(output_one_item);
 	}
-	// Dump results and golden_ref for debugging
-	dumpResult();
+		// Dump results and golden_ref for debugging
+		// dumpResult();
 #endif
 }
 
@@ -1932,4 +1950,14 @@ void cleanup()
 	alignedFree(output);
 	alignedFree(output_reorder);
 	alignedFree(output_one_item);
+}
+
+void writeResults()
+{
+	ofstream result_file;
+	result_file.open("Result.txt", ios::out);
+	result_file << "Correct : " << true_count << endl;
+	result_file << "Wrong : " << false_count << endl;
+	result_file << "Rate : " << float(true_count) / (false_count + true_count) << endl;
+	result_file.close();
 }
